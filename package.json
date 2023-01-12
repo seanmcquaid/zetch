@@ -43,6 +43,9 @@
     "vite": "^4.0.0",
     "vitest": "^0.27.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "axios": "^1.2.2",
+    "zod": "^3.20.2"
+  },
   "sideEffects": false
 }
