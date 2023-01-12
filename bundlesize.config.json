@@ -1,0 +1,12 @@
+{
+  "files": [
+    {
+      "path": "dist/cjs/index.js",
+      "maxSize": "3 kB"
+    },
+    {
+      "path": "dist/esm/index.js",
+      "maxSize": "3 kB"
+    }
+  ]
+}
