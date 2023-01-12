@@ -1,1 +1,1 @@
-export * from './useFunPackage';
+export * from './createAxiod';
