@@ -1,6 +1,6 @@
-# TypeScript Library Template
+# Axiod
 
-This is a base template for any new TypeScript + React libraries I build. It is using Rollup as a build tool with some appropriate plugins that are common for libraries built with Rollup.
+A library for utilizing Zod Schemas coupled with Axios
 
 ## Publishing a package locally
 
