@@ -2,7 +2,7 @@
   <img src="logo.svg" width="160px" align="center" alt="Zetch logo" />
   <h1 align="center">Zetch</h1>
   <p align="center">
-    TypeScript-first schema validation with static type inference
+    A Fetch API Client with static type inference from Zod Schemas
   </p>
 </p>
 
