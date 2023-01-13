@@ -1,10 +1,8 @@
 import { ZodFirstPartySchemaTypes } from 'zod/lib/types';
-import {
-  BaseZetchConfig,
-  ZetchError,
-  ZetchRequestConfig,
-  Headers,
-} from './createZetchClient';
+import ZetchRequestConfig from './types/ZetchRequestConfig';
+import BaseZetchConfig from './types/BaseZetchConfig';
+import Headers from './types/Headers';
+import ZetchError from './ZetchError';
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 

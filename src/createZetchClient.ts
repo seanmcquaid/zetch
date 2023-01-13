@@ -1,78 +1,8 @@
-import { ZodError } from 'zod';
 import { ZodFirstPartySchemaTypes } from 'zod/lib/types';
 import { request } from './request';
-
-export interface Headers {
-  [key: string]: string;
-}
-
-type TokenScheme = 'Basic' | 'Bearer' | 'JWTBearer';
-
-export interface BaseZetchConfig {
-  headers?: Headers;
-
-  authConfig?: {
-    refreshToken: () => Promise<string>;
-    tokenScheme: TokenScheme;
-    token: string;
-  };
-
-  retriesConfig?: {
-    retryStatuses: number[];
-
-    numberOfRetries?: number;
-  };
-  logApiError?: (error: ZetchError) => void;
-
-  logApiValidationError?: (error: ZodError) => void;
-
-  baseUrl: string;
-}
-export interface ZetchRequestConfig<
-  ValidationSchema extends ZodFirstPartySchemaTypes
-> {
-  validationSchema?: ValidationSchema;
-  headers?: Headers;
-
-  body?: any;
-
-  abortController?: AbortController;
-}
-
-export class ZetchError extends Error {
-  errorInfo: { message: string; statusCode: number; data: any };
-
-  requestInfo: {
-    requestConfig: ZetchRequestConfig<ZodFirstPartySchemaTypes>;
-    url: string;
-    numberOfRetries: number;
-    headers: Headers;
-  };
-  constructor(
-    errorInfo: { message: string; statusCode: number; data: any },
-    requestInfo: {
-      requestConfig: ZetchRequestConfig<ZodFirstPartySchemaTypes>;
-      url: string;
-      numberOfRetries: number;
-      headers: Headers;
-    }
-  ) {
-    super(errorInfo.message);
-    this.errorInfo = errorInfo;
-    this.requestInfo = requestInfo;
-  }
-
-  static isZetchError(error: unknown): error is ZetchError {
-    return error instanceof ZetchError;
-  }
-
-  toObject() {
-    return {
-      error: this.errorInfo,
-      request: this.requestInfo,
-    };
-  }
-}
+import ZetchRequestConfig from './types/ZetchRequestConfig';
+import Headers from './types/Headers';
+import BaseZetchConfig from './types/BaseZetchConfig';
 
 const getData = <ValidationSchema extends ZodFirstPartySchemaTypes>(
   promise: Promise<{
@@ -86,7 +16,7 @@ const getData = <ValidationSchema extends ZodFirstPartySchemaTypes>(
   return promise.then(response => response.data);
 };
 
-export const createZetchClient = (zetchConfig: BaseZetchConfig) => {
+const createZetchClient = (zetchConfig: BaseZetchConfig) => {
   return {
     get: <ValidationSchema extends ZodFirstPartySchemaTypes>(
       url: string,
@@ -120,3 +50,5 @@ export const createZetchClient = (zetchConfig: BaseZetchConfig) => {
     },
   };
 };
+
+export default createZetchClient;
