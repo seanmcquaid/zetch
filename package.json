@@ -1,5 +1,5 @@
 {
-  "name": "typescript-library-template",
+  "name": "zetch",
   "version": "0.0.1",
   "description": "",
   "main": "dist/cjs/index.js",
@@ -12,7 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
-    "build": "rollup -c",
+    "build": "rollup -c --bundleConfigAsCjs",
     "bundlesize": "bundlesize",
     "lint": "eslint src --max-warnings=0"
   },
@@ -44,7 +44,6 @@
     "vitest": "^0.27.0"
   },
   "dependencies": {
-    "axios": "^1.2.2",
     "zod": "^3.20.2"
   },
   "sideEffects": false

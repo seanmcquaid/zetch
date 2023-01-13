@@ -1,1 +1,1 @@
-export * from './createAxiod';
+export * from './createZetchClient';
