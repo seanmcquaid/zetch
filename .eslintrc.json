@@ -22,11 +22,7 @@
   "rules": {
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/consistent-type-definitions": ["error"],
-    "prettier/prettier": ["error"]
-  },
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
+    "prettier/prettier": ["error"],
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { AxiosError, AxiosHeaders, AxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosRequestConfig } from 'axios';
 import { ZodFirstPartySchemaTypes } from 'zod/lib/types';
 import { ZodError } from 'zod';
 import axios, { AxiosInstance } from 'axios';
@@ -7,7 +6,6 @@ import axios, { AxiosInstance } from 'axios';
 type AxiodRequestConfig<ValidationSchema extends ZodFirstPartySchemaTypes> =
   Omit<AxiosRequestConfig, 'url' | 'method'> & {
     validationSchema?: ValidationSchema;
-    url: string;
   };
 const createApiClient = (
   baseURL: string,
@@ -62,8 +60,8 @@ const createApiClient = (
           return axiosInstance(originalRequest);
         }
       }
-      if (axiodConfig?.logError) {
-        axiodConfig.logError(error);
+      if (axiodConfig?.logApiError) {
+        axiodConfig.logApiError(error);
       }
       return Promise.reject(error);
     }
@@ -82,7 +80,7 @@ export interface AxiodConfig {
   };
 
   retryStatuses?: number[];
-  logError?: (error: AxiosError) => void;
+  logApiError?: (error: AxiosError) => void;
 
   logApiValidationError?: (error: ZodError) => void;
 }

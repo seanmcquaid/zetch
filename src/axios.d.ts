@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ZodFirstPartySchemaTypes } from 'zod/lib/types';
 
 export declare module 'axios' {
