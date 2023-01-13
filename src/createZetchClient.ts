@@ -5,12 +5,14 @@ interface Headers {
   [key: string]: string;
 }
 
+type TokenScheme = 'Basic' | 'Bearer' | 'JWTBearer';
+
 export interface BaseZetchConfig {
   headers?: Headers;
 
   authConfig?: {
     refreshToken: () => Promise<string>;
-    tokenScheme: 'Basic' | 'Bearer' | 'JWTBearer';
+    tokenScheme: TokenScheme;
     token: string;
   };
 
@@ -19,7 +21,7 @@ export interface BaseZetchConfig {
 
     numberOfRetries?: number;
   };
-  logApiError?: (error: unknown) => void;
+  logApiError?: (error: ZetchError) => void;
 
   logApiValidationError?: (error: ZodError) => void;
 
@@ -119,11 +121,17 @@ const request = async <ValidationSchema extends ZodFirstPartySchemaTypes>(
         }
       }
     }
-    throw new ZetchError({
+    const error = new ZetchError({
       message: response.statusText,
       data,
       statusCode: response.status,
     });
+
+    if (baseZetchConfig.logApiError) {
+      baseZetchConfig.logApiError(error);
+    }
+
+    throw error;
   }
 
   if (requestConfig.validationSchema) {
