@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AxiosError, AxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosHeaders, AxiosRequestConfig } from 'axios';
 import { ZodFirstPartySchemaTypes } from 'zod/lib/types';
 import { ZodError } from 'zod';
 import axios, { AxiosInstance } from 'axios';
@@ -19,10 +19,9 @@ const createApiClient = (
 
   axiosInstance.interceptors.request.use(async config => {
     if (axiodConfig?.authConfig) {
-      const token = await axiodConfig.authConfig.getToken();
       config.headers = {
-        Authorization: `${axiodConfig.authConfig.tokenScheme} ${token}`,
         ...axiodConfig?.headers,
+        Authorization: `${axiodConfig.authConfig.tokenScheme} ${axiodConfig?.authConfig.token}`,
       };
     } else {
       config.headers = {
@@ -55,7 +54,7 @@ const createApiClient = (
         ) {
           originalRequest._retry = true;
           if (axiodConfig?.authConfig) {
-            const token = axiodConfig.authConfig.getToken();
+            const token = axiodConfig.authConfig.refreshToken();
             axiosInstance.defaults.headers.common[
               'Authorization'
             ] = `${axiodConfig.authConfig.tokenScheme} ${token};`;
@@ -77,8 +76,9 @@ export interface AxiodConfig {
   headers?: { [key: string]: string };
 
   authConfig?: {
-    getToken: () => Promise<string>;
+    refreshToken: () => Promise<string>;
     tokenScheme: 'Basic' | 'Bearer' | 'JWTBearer';
+    token: string;
   };
 
   retryStatuses?: number[];
