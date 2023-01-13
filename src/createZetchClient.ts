@@ -1,7 +1,8 @@
 import { ZodError } from 'zod';
 import { ZodFirstPartySchemaTypes } from 'zod/lib/types';
+import { request } from './request';
 
-interface Headers {
+export interface Headers {
   [key: string]: string;
 }
 
@@ -27,15 +28,10 @@ export interface BaseZetchConfig {
 
   baseUrl: string;
 }
-
-type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-
 export interface ZetchRequestConfig<
   ValidationSchema extends ZodFirstPartySchemaTypes
 > {
   validationSchema?: ValidationSchema;
-  isRetry?: boolean;
-
   headers?: Headers;
 
   body?: any;
@@ -44,12 +40,26 @@ export interface ZetchRequestConfig<
 }
 
 export class ZetchError extends Error {
-  statusCode: number;
-  data: any;
-  constructor(errorInfo: { message: string; statusCode: number; data: any }) {
+  errorInfo: { message: string; statusCode: number; data: any };
+
+  requestInfo: {
+    requestConfig: ZetchRequestConfig<ZodFirstPartySchemaTypes>;
+    url: string;
+    numberOfRetries: number;
+    headers: Headers;
+  };
+  constructor(
+    errorInfo: { message: string; statusCode: number; data: any },
+    requestInfo: {
+      requestConfig: ZetchRequestConfig<ZodFirstPartySchemaTypes>;
+      url: string;
+      numberOfRetries: number;
+      headers: Headers;
+    }
+  ) {
     super(errorInfo.message);
-    this.statusCode = errorInfo.statusCode;
-    this.data = errorInfo.data;
+    this.errorInfo = errorInfo;
+    this.requestInfo = requestInfo;
   }
 
   static isZetchError(error: unknown): error is ZetchError {
@@ -58,90 +68,22 @@ export class ZetchError extends Error {
 
   toObject() {
     return {
-      message: this.message,
-      statusCode: this.statusCode,
-      data: this.data,
+      error: this.errorInfo,
+      request: this.requestInfo,
     };
   }
 }
 
-const request = async <ValidationSchema extends ZodFirstPartySchemaTypes>(
-  url: string,
-  requestConfig: ZetchRequestConfig<ValidationSchema>,
-  baseZetchConfig: BaseZetchConfig,
-  method: Method = 'GET',
-  retries = 0
-): Promise<ValidationSchema['_output']> => {
-  const numberOfRetries = baseZetchConfig?.retriesConfig?.numberOfRetries
-    ? baseZetchConfig.retriesConfig.numberOfRetries
-    : 1;
-  const headers: Headers = baseZetchConfig.authConfig
-    ? {
-        ...baseZetchConfig.headers,
-        ...requestConfig.headers,
-        Authorization: `${baseZetchConfig.authConfig.tokenScheme} ${baseZetchConfig.authConfig.token}`,
-      }
-    : { ...baseZetchConfig.headers, ...requestConfig.headers };
-  const response = await fetch(baseZetchConfig.baseUrl + url, {
-    headers,
-    body: requestConfig.body,
-    signal: requestConfig.abortController?.signal,
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    if (
-      baseZetchConfig.retriesConfig &&
-      baseZetchConfig.retriesConfig.retryStatuses.includes(response.status) &&
-      numberOfRetries > retries
-    ) {
-      if (!requestConfig.isRetry) {
-        const numberOfAttemptedRetries = retries + 1;
-        if (baseZetchConfig.authConfig) {
-          const refreshedToken =
-            await baseZetchConfig.authConfig?.refreshToken();
-          const updatedHeaders: Headers = {
-            ...headers,
-            Authorization: `${baseZetchConfig.authConfig?.tokenScheme} ${refreshedToken}`,
-          };
-          return request(
-            url,
-            { ...requestConfig, isRetry: true, headers: updatedHeaders },
-            baseZetchConfig,
-            method,
-            numberOfAttemptedRetries
-          );
-        } else {
-          return request(
-            url,
-            { ...requestConfig, isRetry: true, headers },
-            baseZetchConfig,
-            method,
-            numberOfAttemptedRetries
-          );
-        }
-      }
-    }
-    const error = new ZetchError({
-      message: response.statusText,
-      data,
-      statusCode: response.status,
-    });
-
-    if (baseZetchConfig.logApiError) {
-      baseZetchConfig.logApiError(error);
-    }
-
-    throw error;
-  }
-
-  if (requestConfig.validationSchema) {
-    const validationResults = requestConfig.validationSchema?.safeParse(data);
-    if (!validationResults?.success && baseZetchConfig?.logApiValidationError) {
-      baseZetchConfig.logApiValidationError(validationResults.error);
-    }
-  }
-
-  return data;
+const getData = <ValidationSchema extends ZodFirstPartySchemaTypes>(
+  promise: Promise<{
+    data: ValidationSchema['_output'];
+    requestConfig: ZetchRequestConfig<ValidationSchema>;
+    url: string;
+    numberOfRetries: number;
+    headers: Headers;
+  }>
+) => {
+  return promise.then(response => response.data);
 };
 
 export const createZetchClient = (zetchConfig: BaseZetchConfig) => {
@@ -150,31 +92,31 @@ export const createZetchClient = (zetchConfig: BaseZetchConfig) => {
       url: string,
       requestConfig: ZetchRequestConfig<ValidationSchema>
     ) => {
-      return request(url, requestConfig, zetchConfig);
+      return getData(request(url, requestConfig, zetchConfig));
     },
     post: <ValidationSchema extends ZodFirstPartySchemaTypes>(
       url: string,
       requestConfig: ZetchRequestConfig<ValidationSchema>
     ) => {
-      return request(url, requestConfig, zetchConfig, 'POST');
+      return getData(request(url, requestConfig, zetchConfig, 'POST'));
     },
     put: <ValidationSchema extends ZodFirstPartySchemaTypes>(
       url: string,
       requestConfig: ZetchRequestConfig<ValidationSchema>
     ) => {
-      return request(url, requestConfig, zetchConfig, 'PUT');
+      return getData(request(url, requestConfig, zetchConfig, 'PUT'));
     },
     patch: <ValidationSchema extends ZodFirstPartySchemaTypes>(
       url: string,
       requestConfig: ZetchRequestConfig<ValidationSchema>
     ) => {
-      return request(url, requestConfig, zetchConfig, 'PATCH');
+      return getData(request(url, requestConfig, zetchConfig, 'PATCH'));
     },
     delete: <ValidationSchema extends ZodFirstPartySchemaTypes>(
       url: string,
       requestConfig: ZetchRequestConfig<ValidationSchema>
     ) => {
-      return request(url, requestConfig, zetchConfig, 'DELETE');
+      return getData(request(url, requestConfig, zetchConfig, 'DELETE'));
     },
   };
 };

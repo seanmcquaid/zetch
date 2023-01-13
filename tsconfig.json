@@ -10,6 +10,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "types": ["vitest/globals"]
   },
   "exclude": ["**.test.ts", "**.test.tsx", "**/**.test.ts", "**/**.test.tsx", "vite.config.ts"]
 }
