@@ -1,6 +1,6 @@
-# Axiod
+# Zetch
 
-A library for utilizing Zod Schemas coupled with Axios
+A library for utilizing Zod Schemas coupled with Fetch
 
 ## Publishing a package locally
 
