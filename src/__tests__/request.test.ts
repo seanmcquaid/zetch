@@ -3,8 +3,8 @@ import { rest } from 'msw';
 import { request } from '../request';
 import { z } from 'zod';
 import { fetch } from 'cross-fetch';
-import { ZetchError } from '../createZetchClient';
 import { afterEach } from 'vitest';
+import ZetchError from '../ZetchError';
 
 global.fetch = fetch;
 
@@ -78,8 +78,6 @@ describe('request', () => {
           )
         );
 
-        const refreshToken = vi.fn();
-
         try {
           await request(
             '/posts',
@@ -120,6 +118,59 @@ describe('request', () => {
         );
       } catch (e) {
         expect(e).toBeInstanceOf(ZetchError);
+      }
+    });
+    it('logs api error if request fails and logApiError func is provided', async () => {
+      const logApiError = vi.fn();
+      mswServer.use(
+        rest.get(
+          'https://jsonplaceholder.typicode.com/posts',
+          (req, res, context) => {
+            return res(context.status(500), context.json({}));
+          }
+        )
+      );
+      try {
+        await request(
+          '/posts',
+          {},
+          {
+            baseUrl: 'https://jsonplaceholder.typicode.com',
+            logApiError,
+          },
+          'GET',
+          0
+        );
+      } catch (e) {
+        expect(logApiError).toHaveBeenCalled();
+      }
+    });
+    it('only retries to the max number of times configured in the baseConfig', async () => {
+      mswServer.use(
+        rest.get(
+          'https://jsonplaceholder.typicode.com/posts',
+          (req, res, context) => {
+            return res(context.status(500), context.json({}));
+          }
+        )
+      );
+      try {
+        await request(
+          '/posts',
+          {},
+          {
+            baseUrl: 'https://jsonplaceholder.typicode.com',
+            retriesConfig: {
+              numberOfRetries: 2,
+              retryStatuses: [500],
+            },
+          },
+          'GET',
+          0
+        );
+      } catch (e) {
+        const error = e as ZetchError;
+        expect(error.requestInfo.numberOfRetries).toEqual(2);
       }
     });
   });
