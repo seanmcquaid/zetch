@@ -1,7 +1,9 @@
 {
   "name": "zetch",
   "version": "0.0.1",
-  "description": "",
+  "description": "An API client with static type inference from your Zod Schemas",
+  "author": "Sean McQuaid",
+  "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
@@ -16,8 +18,6 @@
     "bundlesize": "bundlesize",
     "lint": "eslint src --max-warnings=0"
   },
-  "author": "",
-  "license": "ISC",
   "peerDependencies": {},
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.0",
