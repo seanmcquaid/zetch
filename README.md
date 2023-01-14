@@ -13,8 +13,6 @@
 - [Basic Usage](#basic-usage)
 - [Base Configuration Options](#base-configuration-options)
 - [Request Configuration Options](#request-configuration-options)
-- [Changelog](#changelog)
-- [Contributing](#contributing)
 
 ## Introduction
 
