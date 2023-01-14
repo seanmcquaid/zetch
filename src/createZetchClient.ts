@@ -51,20 +51,4 @@ const createZetchClient = (zetchConfig: BaseZetchConfig) => {
     },
   };
 };
-
-const zetchClient = createZetchClient({
-  baseUrl: 'https://jsonplaceholder.typicode.com',
-});
-
-const postSchema = z.object({
-  title: z.string(),
-  body: z.string(),
-  id: z.number(),
-  userId: z.number(),
-});
-
-const result = await zetchClient.get('/posts', {
-  validationSchema: z.array(postSchema),
-});
-
 export default createZetchClient;
