@@ -6,21 +6,13 @@
   </p>
 </p>
 
-
-TODO :
-
-1) Documentation
-2) Changesets
-
 ## Table of contents
 
 - [Introduction](#introduction)
 - [Installation](#installation)
-- [Types](#types)
-    - [BaseZetchConfig](#base-zetch-config)
-    - [ZetchRequestConfig](#zetch-request-config)
-- [createZetchClient](#create-a-zetch-client)
-- [ZetchError](#zetch-error)
+- [Basic Usage](#basic-usage)
+- [Base Configuration Options](#base-configuration-options)
+- [Request Configuration Options](#request-configuration-options)
 - [Changelog](#changelog)
 - [Contributing](#contributing)
 
@@ -48,16 +40,80 @@ bun add zod           # bun
 pnpm add zod          # pnpm
 ```
 
-## Types
+## Basic Usage
 
-### BaseZetchConfig
+Creating an API client and making a request
 
-### ZetchRequestConfig
+```ts
+// Create a Zetch Client with a Base Url
+const zetchClient = createZetchClient({
+  baseUrl: 'https://jsonplaceholder.typicode.com',
+});
 
-## createZetchClient
+// Create a schema for a Post
+const postSchema = z.object({
+  title: z.string(),
+  body: z.string(),
+  id: z.number(),
+  userId: z.number(),
+});
 
-## ZetchError
+// Make a request to get Posts with your schema provided to get static type inference
+const result = await zetchClient.get('/posts', {
+  validationSchema: z.array(postSchema),
+});
+```
 
-## Changelog
+## Base Configuration Options
 
-## Contributing
+```ts
+interface BaseZetchConfig {
+    // The base url for your client
+    baseUrl: string;
+
+    // Base headers you'd like to provide for every request from the client
+    headers?: Headers;
+
+    // Configuration for authentication
+    authConfig?: {
+        // The function you'd like called to refresh the token
+        refreshToken: () => Promise<string>;
+        // The token scheme you'd like to use (Basic, Bearer, JWTBearer)
+        tokenScheme: TokenScheme;
+        // The original token you'd like to use
+        token: string;
+    };
+
+    // Configuration for retries
+    retriesConfig?: {
+        // Status codes you'd like to retry on
+        retryStatuses: number[];
+        // The max number of retries you'd like to allow
+        numberOfRetries?: number;
+    };
+
+    // The function you'd like to use to log API errors to your error service of choice
+    logApiError?: (error: ZetchError) => void;
+
+    // The function you'd like to use to log API Validation errors to your error service of choice
+    logApiValidationError?: (error: ZodError) => void;
+}
+```
+
+## Request Configuration Options
+
+```ts
+interface ZetchRequestConfig {
+  // The validation schema you'd like to use for the response
+  validationSchema?: ZodFirstPartySchemaTypes;
+
+  // The headers you'd like to provide for this specific request. These will override previously set values in your client
+  headers?: Headers;
+
+  // The request body you'd like to send with the request
+  body?: any;
+
+  // The abort controller you'd like to use for this request, in the event you would like to cancel the request
+  abortController?: AbortController;
+}
+```

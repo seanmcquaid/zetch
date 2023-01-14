@@ -3,6 +3,7 @@ import { request } from './request';
 import ZetchRequestConfig from './types/ZetchRequestConfig';
 import Headers from './types/Headers';
 import BaseZetchConfig from './types/BaseZetchConfig';
+import { z } from 'zod';
 
 const getData = <ValidationSchema extends ZodFirstPartySchemaTypes>(
   promise: Promise<{
@@ -50,5 +51,20 @@ const createZetchClient = (zetchConfig: BaseZetchConfig) => {
     },
   };
 };
+
+const zetchClient = createZetchClient({
+  baseUrl: 'https://jsonplaceholder.typicode.com',
+});
+
+const postSchema = z.object({
+  title: z.string(),
+  body: z.string(),
+  id: z.number(),
+  userId: z.number(),
+});
+
+const result = await zetchClient.get('/posts', {
+  validationSchema: z.array(postSchema),
+});
 
 export default createZetchClient;
