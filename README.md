@@ -16,8 +16,6 @@ TODO :
 
 - [Introduction](#introduction)
 - [Installation](#installation)
-    - [Requirements](#requirements)
-    - [Node/npm](#from-npm-nodebun)
 - [Types](#types)
     - [BaseZetchConfig](#base-zetch-config)
     - [ZetchRequestConfig](#zetch-request-config)
@@ -43,10 +41,12 @@ Some key features of Zetch are:
 
 ## Installation
 
-### Requirements
-
-### Node/npm
-
+```sh
+npm install zod       # npm
+yarn add zod          # yarn
+bun add zod           # bun
+pnpm add zod          # pnpm
+```
 
 ## Types
 
