@@ -2,11 +2,9 @@ import { setupServer } from 'msw/node';
 import { rest } from 'msw';
 import { request } from '../request';
 import { z } from 'zod';
-import { fetch } from 'cross-fetch';
 import { afterEach } from 'vitest';
 import ZetchError from '../ZetchError';
-
-global.fetch = fetch;
+import 'isomorphic-fetch';
 
 const mswServer = setupServer(
   rest.get(
