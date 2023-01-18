@@ -32,10 +32,10 @@ Some key features of Zetch are:
 ## Installation
 
 ```sh
-npm install zod       # npm
-yarn add zod          # yarn
-bun add zod           # bun
-pnpm add zod          # pnpm
+npm install zetch       # npm
+yarn add zetch          # yarn
+bun add zetch           # bun
+pnpm add zetch         # pnpm
 ```
 
 ## Basic Usage
