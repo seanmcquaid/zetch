@@ -3,6 +3,7 @@ import ZetchRequestConfig from './types/ZetchRequestConfig';
 import BaseZetchConfig from './types/BaseZetchConfig';
 import Headers from './types/Headers';
 import ZetchError from './ZetchError';
+import 'isomorphic-fetch';
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
