@@ -8,15 +8,21 @@ type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export const request = async <
   ValidationSchema extends ZodFirstPartySchemaTypes
->(
-  url: string,
-  requestConfig: ZetchRequestConfig<ValidationSchema>,
-  baseZetchConfig: BaseZetchConfig,
-  method: Method = 'GET',
-  retries = 0
-): Promise<{
+>({
+  url,
+  requestConfig,
+  baseZetchConfig,
+  method = 'GET',
+  retries = 0,
+}: {
+  url: string;
+  requestConfig?: ZetchRequestConfig<ValidationSchema>;
+  baseZetchConfig: BaseZetchConfig;
+  method?: Method;
+  retries?: number;
+}): Promise<{
   data: ValidationSchema['_output'];
-  requestConfig: ZetchRequestConfig<ValidationSchema>;
+  requestConfig?: ZetchRequestConfig<ValidationSchema>;
   url: string;
   numberOfRetries: number;
   headers: Headers;
@@ -27,14 +33,14 @@ export const request = async <
   const headers: Headers = baseZetchConfig.authConfig
     ? {
         ...baseZetchConfig.headers,
-        ...requestConfig.headers,
+        ...requestConfig?.headers,
         Authorization: `${baseZetchConfig.authConfig.tokenScheme} ${baseZetchConfig.authConfig.token}`,
       }
-    : { ...baseZetchConfig.headers, ...requestConfig.headers };
+    : { ...baseZetchConfig.headers, ...requestConfig?.headers };
   const response = await fetch(baseZetchConfig.baseUrl + url, {
     headers,
-    body: requestConfig.body,
-    signal: requestConfig.abortController?.signal,
+    body: requestConfig?.body,
+    signal: requestConfig?.abortController?.signal,
   });
   const data = await response.json();
   if (!response.ok) {
@@ -51,21 +57,21 @@ export const request = async <
             ...headers,
             Authorization: `${baseZetchConfig.authConfig?.tokenScheme} ${refreshedToken}`,
           };
-          return request(
+          return request({
             url,
-            { ...requestConfig, headers: updatedHeaders },
+            requestConfig: { ...requestConfig, headers: updatedHeaders },
             baseZetchConfig,
             method,
-            numberOfAttemptedRetries
-          );
+            retries: numberOfAttemptedRetries,
+          });
         } else {
-          return request(
+          return request({
             url,
-            { ...requestConfig, headers },
+            requestConfig: { ...requestConfig, headers },
             baseZetchConfig,
             method,
-            numberOfAttemptedRetries
-          );
+            retries: numberOfAttemptedRetries,
+          });
         }
       }
     }
@@ -90,7 +96,7 @@ export const request = async <
     throw error;
   }
 
-  if (requestConfig.validationSchema) {
+  if (requestConfig?.validationSchema) {
     const validationResults = requestConfig.validationSchema?.safeParse(data);
     if (!validationResults?.success && baseZetchConfig?.logApiValidationError) {
       baseZetchConfig.logApiValidationError(validationResults.error);

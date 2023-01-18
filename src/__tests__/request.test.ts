@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { afterEach } from 'vitest';
 import ZetchError from '../ZetchError';
 import 'isomorphic-fetch';
+import baseZetchConfig from '../types/BaseZetchConfig';
 
 const mswServer = setupServer(
   rest.get(
@@ -43,10 +44,9 @@ describe('request', () => {
         const refreshToken = vi.fn();
 
         try {
-          await request(
-            '/posts',
-            {},
-            {
+          await request({
+            url: '/posts',
+            baseZetchConfig: {
               baseUrl: 'https://jsonplaceholder.typicode.com',
               authConfig: {
                 refreshToken,
@@ -57,8 +57,7 @@ describe('request', () => {
                 retryStatuses: [401],
               },
             },
-            'GET'
-          );
+          });
         } catch (e) {
           expect(e).toBeInstanceOf(ZetchError);
           const error = e as ZetchError;
@@ -77,17 +76,15 @@ describe('request', () => {
         );
 
         try {
-          await request(
-            '/posts',
-            {},
-            {
+          await request({
+            url: '/posts',
+            baseZetchConfig: {
               baseUrl: 'https://jsonplaceholder.typicode.com',
               retriesConfig: {
                 retryStatuses: [401],
               },
             },
-            'GET'
-          );
+          });
         } catch (e) {
           expect(e).toBeInstanceOf(ZetchError);
           const error = e as ZetchError;
@@ -105,15 +102,12 @@ describe('request', () => {
         )
       );
       try {
-        await request(
-          '/posts',
-          {},
-          {
+        await request({
+          url: '/posts',
+          baseZetchConfig: {
             baseUrl: 'https://jsonplaceholder.typicode.com',
           },
-          'GET',
-          0
-        );
+        });
       } catch (e) {
         expect(e).toBeInstanceOf(ZetchError);
       }
@@ -129,16 +123,13 @@ describe('request', () => {
         )
       );
       try {
-        await request(
-          '/posts',
-          {},
-          {
+        await request({
+          url: '/posts',
+          baseZetchConfig: {
             baseUrl: 'https://jsonplaceholder.typicode.com',
             logApiError,
           },
-          'GET',
-          0
-        );
+        });
       } catch (e) {
         expect(logApiError).toHaveBeenCalled();
       }
@@ -153,19 +144,16 @@ describe('request', () => {
         )
       );
       try {
-        await request(
-          '/posts',
-          {},
-          {
+        await request({
+          url: '/posts',
+          baseZetchConfig: {
             baseUrl: 'https://jsonplaceholder.typicode.com',
             retriesConfig: {
               numberOfRetries: 2,
               retryStatuses: [500],
             },
           },
-          'GET',
-          0
-        );
+        });
       } catch (e) {
         const error = e as ZetchError;
         expect(error.requestInfo.numberOfRetries).toEqual(2);
@@ -174,9 +162,9 @@ describe('request', () => {
   });
   describe('request success', () => {
     it('returns data if successful', async () => {
-      const response = await request(
-        '/posts',
-        {
+      const response = await request({
+        url: '/posts',
+        requestConfig: {
           validationSchema: z.array(
             z.object({
               title: z.string(),
@@ -186,10 +174,8 @@ describe('request', () => {
             })
           ),
         },
-        { baseUrl: 'https://jsonplaceholder.typicode.com' },
-        'GET',
-        0
-      );
+        baseZetchConfig: { baseUrl: 'https://jsonplaceholder.typicode.com' },
+      });
 
       expect(response.data).toEqual([
         { title: 'example', body: 'body', id: 1, userId: 2 },
@@ -198,9 +184,9 @@ describe('request', () => {
     it('logs api validation error if the schema does not match the data', async () => {
       const logApiValidationError = vi.fn();
 
-      await request(
-        '/posts',
-        {
+      await request({
+        url: '/posts',
+        requestConfig: {
           validationSchema: z.object({
             title: z.string(),
             body: z.string(),
@@ -208,13 +194,11 @@ describe('request', () => {
             userId: z.number(),
           }),
         },
-        {
+        baseZetchConfig: {
           baseUrl: 'https://jsonplaceholder.typicode.com',
           logApiValidationError,
         },
-        'GET',
-        0
-      );
+      });
 
       expect(logApiValidationError).toHaveBeenCalled();
     });

@@ -6,7 +6,7 @@ class ZetchError extends Error {
   errorInfo: { message: string; statusCode: number; data: any };
 
   requestInfo: {
-    requestConfig: ZetchRequestConfig<ZodFirstPartySchemaTypes>;
+    requestConfig?: ZetchRequestConfig<ZodFirstPartySchemaTypes>;
     url: string;
     numberOfRetries: number;
     headers: Headers;
@@ -14,7 +14,7 @@ class ZetchError extends Error {
   constructor(
     errorInfo: { message: string; statusCode: number; data: any },
     requestInfo: {
-      requestConfig: ZetchRequestConfig<ZodFirstPartySchemaTypes>;
+      requestConfig?: ZetchRequestConfig<ZodFirstPartySchemaTypes>;
       url: string;
       numberOfRetries: number;
       headers: Headers;

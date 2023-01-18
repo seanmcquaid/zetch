@@ -6,7 +6,7 @@ import BaseZetchConfig from './types/BaseZetchConfig';
 const getData = <ValidationSchema extends ZodFirstPartySchemaTypes>(
   promise: Promise<{
     data: ValidationSchema['_output'];
-    requestConfig: ZetchRequestConfig<ValidationSchema>;
+    requestConfig?: ZetchRequestConfig<ValidationSchema>;
     url: string;
     numberOfRetries: number;
     headers: Headers;
@@ -19,33 +19,67 @@ const createZetchClient = (zetchConfig: BaseZetchConfig) => {
   return {
     get: <ValidationSchema extends ZodFirstPartySchemaTypes>(
       url: string,
-      requestConfig: ZetchRequestConfig<ValidationSchema>
+      requestConfig?: ZetchRequestConfig<ValidationSchema>
     ) => {
-      return getData(request(url, requestConfig, zetchConfig));
+      return getData(
+        request({
+          url,
+          requestConfig,
+          baseZetchConfig: zetchConfig,
+        })
+      );
     },
     post: <ValidationSchema extends ZodFirstPartySchemaTypes>(
       url: string,
-      requestConfig: ZetchRequestConfig<ValidationSchema>
+      requestConfig?: ZetchRequestConfig<ValidationSchema>
     ) => {
-      return getData(request(url, requestConfig, zetchConfig, 'POST'));
+      return getData(
+        request({
+          url,
+          requestConfig,
+          baseZetchConfig: zetchConfig,
+          method: 'POST',
+        })
+      );
     },
     put: <ValidationSchema extends ZodFirstPartySchemaTypes>(
       url: string,
-      requestConfig: ZetchRequestConfig<ValidationSchema>
+      requestConfig?: ZetchRequestConfig<ValidationSchema>
     ) => {
-      return getData(request(url, requestConfig, zetchConfig, 'PUT'));
+      return getData(
+        request({
+          url,
+          requestConfig,
+          baseZetchConfig: zetchConfig,
+          method: 'PUT',
+        })
+      );
     },
     patch: <ValidationSchema extends ZodFirstPartySchemaTypes>(
       url: string,
-      requestConfig: ZetchRequestConfig<ValidationSchema>
+      requestConfig?: ZetchRequestConfig<ValidationSchema>
     ) => {
-      return getData(request(url, requestConfig, zetchConfig, 'PATCH'));
+      return getData(
+        request({
+          url,
+          requestConfig,
+          baseZetchConfig: zetchConfig,
+          method: 'PATCH',
+        })
+      );
     },
     delete: <ValidationSchema extends ZodFirstPartySchemaTypes>(
       url: string,
-      requestConfig: ZetchRequestConfig<ValidationSchema>
+      requestConfig?: ZetchRequestConfig<ValidationSchema>
     ) => {
-      return getData(request(url, requestConfig, zetchConfig, 'DELETE'));
+      return getData(
+        request({
+          url,
+          requestConfig,
+          baseZetchConfig: zetchConfig,
+          method: 'DELETE',
+        })
+      );
     },
   };
 };
