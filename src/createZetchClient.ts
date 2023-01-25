@@ -26,6 +26,7 @@ const createZetchClient = (zetchConfig: BaseZetchConfig) => {
           url,
           requestConfig,
           baseZetchConfig: zetchConfig,
+          method: 'GET',
         })
       );
     },

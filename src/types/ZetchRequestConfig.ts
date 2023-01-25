@@ -11,7 +11,7 @@ interface ZetchRequestConfig<
   headers?: Headers;
 
   // The request body you'd like to send with the request
-  body?: any;
+  body?: XMLHttpRequestBodyInit;
 
   // The abort controller you'd like to use for this request, in the event you would like to cancel the request
   abortController?: AbortController;

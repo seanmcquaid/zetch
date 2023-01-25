@@ -12,13 +12,13 @@ export const request = async <
   url,
   requestConfig,
   baseZetchConfig,
-  method = 'GET',
+  method,
   retries = 0,
 }: {
   url: string;
   requestConfig?: ZetchRequestConfig<ValidationSchema>;
   baseZetchConfig: BaseZetchConfig;
-  method?: Method;
+  method: Method;
   retries?: number;
 }): Promise<{
   data: ValidationSchema['_output'];
@@ -41,6 +41,7 @@ export const request = async <
     headers,
     body: requestConfig?.body,
     signal: requestConfig?.abortController?.signal,
+    method,
   });
   const data = await response.json();
   if (!response.ok) {
