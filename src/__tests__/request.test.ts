@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { afterEach } from 'vitest';
 import ZetchError from '../ZetchError';
 import 'isomorphic-fetch';
-import baseZetchConfig from '../types/BaseZetchConfig';
 
 const mswServer = setupServer(
   rest.get(
@@ -57,6 +56,7 @@ describe('request', () => {
                 retryStatuses: [401],
               },
             },
+            method: 'GET',
           });
         } catch (e) {
           expect(e).toBeInstanceOf(ZetchError);
@@ -84,6 +84,7 @@ describe('request', () => {
                 retryStatuses: [401],
               },
             },
+            method: 'GET',
           });
         } catch (e) {
           expect(e).toBeInstanceOf(ZetchError);
@@ -107,6 +108,7 @@ describe('request', () => {
           baseZetchConfig: {
             baseUrl: 'https://jsonplaceholder.typicode.com',
           },
+          method: 'GET',
         });
       } catch (e) {
         expect(e).toBeInstanceOf(ZetchError);
@@ -129,6 +131,7 @@ describe('request', () => {
             baseUrl: 'https://jsonplaceholder.typicode.com',
             logApiError,
           },
+          method: 'GET',
         });
       } catch (e) {
         expect(logApiError).toHaveBeenCalled();
@@ -153,6 +156,7 @@ describe('request', () => {
               retryStatuses: [500],
             },
           },
+          method: 'GET',
         });
       } catch (e) {
         const error = e as ZetchError;
@@ -175,6 +179,7 @@ describe('request', () => {
           ),
         },
         baseZetchConfig: { baseUrl: 'https://jsonplaceholder.typicode.com' },
+        method: 'GET',
       });
 
       expect(response.data).toEqual([
@@ -198,6 +203,7 @@ describe('request', () => {
           baseUrl: 'https://jsonplaceholder.typicode.com',
           logApiValidationError,
         },
+        method: 'GET',
       });
 
       expect(logApiValidationError).toHaveBeenCalled();
