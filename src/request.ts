@@ -3,6 +3,7 @@ import ZetchRequestConfig from './types/ZetchRequestConfig';
 import BaseZetchConfig from './types/BaseZetchConfig';
 import Headers from './types/Headers';
 import ZetchError from './ZetchError';
+import { z } from 'zod';
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -21,7 +22,7 @@ export const request = async <
   method: Method;
   retries?: number;
 }): Promise<{
-  data: ValidationSchema['_output'];
+  data: z.infer<ValidationSchema>;
   requestConfig?: ZetchRequestConfig<ValidationSchema>;
   url: string;
   numberOfRetries: number;

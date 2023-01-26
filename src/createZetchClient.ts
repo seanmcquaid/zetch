@@ -5,9 +5,10 @@ import ZetchRequestConfig, {
 } from './types/ZetchRequestConfig';
 import Headers from './types/Headers';
 import BaseZetchConfig from './types/BaseZetchConfig';
+import { z } from 'zod';
 const getData = <ValidationSchema extends ZodFirstPartySchemaTypes>(
   promise: Promise<{
-    data: ValidationSchema['_output'];
+    data: z.infer<ValidationSchema>;
     requestConfig?: ZetchRequestConfig<ValidationSchema>;
     url: string;
     numberOfRetries: number;
