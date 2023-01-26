@@ -86,4 +86,5 @@ const createZetchClient = (zetchConfig: BaseZetchConfig) => {
     },
   };
 };
+
 export default createZetchClient;

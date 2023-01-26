@@ -109,9 +109,24 @@ interface ZetchRequestConfig {
   headers?: Headers;
 
   // The request body you'd like to send with the request
-  body?: XMLHttpRequestBodyInit;
+  body?: FormData | unknown[] | { [key: string]: unknown };
 
   // The abort controller you'd like to use for this request, in the event you would like to cancel the request
   abortController?: AbortController;
+}
+```
+
+```ts
+interface ZetchGetRequestConfig<
+    ValidationSchema extends ZodFirstPartySchemaTypes
+> {
+    // The validation schema you'd like to use for the response
+    validationSchema?: ValidationSchema;
+
+    // The headers you'd like to provide for this specific request. These will override previously set values in your client
+    headers?: Headers;
+
+    // The abort controller you'd like to use for this request, in the event you would like to cancel the request
+    abortController?: AbortController;
 }
 ```

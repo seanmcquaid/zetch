@@ -11,7 +11,7 @@ interface ZetchRequestConfig<
   headers?: Headers;
 
   // The request body you'd like to send with the request
-  body?: FormData | unknown[] | Record<string, unknown>;
+  body?: FormData | unknown[] | { [key: string]: unknown };
 
   // The abort controller you'd like to use for this request, in the event you would like to cancel the request
   abortController?: AbortController;
