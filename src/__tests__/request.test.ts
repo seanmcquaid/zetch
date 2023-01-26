@@ -4,7 +4,10 @@ import { request } from '../request';
 import { z } from 'zod';
 import { afterEach } from 'vitest';
 import ZetchError from '../ZetchError';
-import 'isomorphic-fetch';
+import { fetch } from 'cross-fetch';
+
+// Add fetch polyfill
+global.fetch = fetch;
 
 const mswServer = setupServer(
   rest.get(
