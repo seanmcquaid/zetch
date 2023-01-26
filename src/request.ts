@@ -30,6 +30,11 @@ export const request = async <
   const maxNumberOfRetries = baseZetchConfig?.retriesConfig?.numberOfRetries
     ? baseZetchConfig.retriesConfig.numberOfRetries
     : 1;
+  const body = requestConfig?.body
+    ? requestConfig?.body instanceof FormData
+      ? requestConfig?.body
+      : JSON.stringify(requestConfig?.body)
+    : undefined;
   const headers: Headers = baseZetchConfig.authConfig
     ? {
         ...baseZetchConfig.headers,
@@ -39,7 +44,7 @@ export const request = async <
     : { ...baseZetchConfig.headers, ...requestConfig?.headers };
   const response = await fetch(baseZetchConfig.baseUrl + url, {
     headers,
-    body: requestConfig?.body,
+    body,
     signal: requestConfig?.abortController?.signal,
     method,
   });

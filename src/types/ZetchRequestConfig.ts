@@ -11,10 +11,14 @@ interface ZetchRequestConfig<
   headers?: Headers;
 
   // The request body you'd like to send with the request
-  body?: XMLHttpRequestBodyInit;
+  body?: FormData | unknown[] | Record<string, unknown>;
 
   // The abort controller you'd like to use for this request, in the event you would like to cancel the request
   abortController?: AbortController;
 }
+
+export type ZetchGetRequestConfig<
+  ValidationSchema extends ZodFirstPartySchemaTypes
+> = Omit<ZetchRequestConfig<ValidationSchema>, 'body'>;
 
 export default ZetchRequestConfig;

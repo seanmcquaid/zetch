@@ -1,6 +1,8 @@
 import { ZodFirstPartySchemaTypes } from 'zod/lib/types';
 import { request } from './request';
-import ZetchRequestConfig from './types/ZetchRequestConfig';
+import ZetchRequestConfig, {
+  ZetchGetRequestConfig,
+} from './types/ZetchRequestConfig';
 import Headers from './types/Headers';
 import BaseZetchConfig from './types/BaseZetchConfig';
 const getData = <ValidationSchema extends ZodFirstPartySchemaTypes>(
@@ -19,7 +21,7 @@ const createZetchClient = (zetchConfig: BaseZetchConfig) => {
   return {
     get: <ValidationSchema extends ZodFirstPartySchemaTypes>(
       url: string,
-      requestConfig?: ZetchRequestConfig<ValidationSchema>
+      requestConfig?: ZetchGetRequestConfig<ValidationSchema>
     ) => {
       return getData(
         request({
