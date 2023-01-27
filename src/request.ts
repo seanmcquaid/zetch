@@ -41,7 +41,7 @@ export const request = async <
     ? {
         ...baseZetchConfig?.headers,
         ...requestConfig?.headers,
-        Authorization: `${authConfig.tokenScheme} ${authConfig.token}`,
+        Authorization: `${authConfig.tokenScheme} ${authConfig.getToken()}`,
       }
     : { ...baseZetchConfig?.headers, ...requestConfig?.headers };
   const response = await fetch(`${baseZetchConfig?.baseUrl ?? ''}${url}`, {

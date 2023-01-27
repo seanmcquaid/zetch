@@ -52,7 +52,7 @@ describe('request', () => {
               baseUrl: 'https://jsonplaceholder.typicode.com',
               authConfig: {
                 refreshToken,
-                token: 'token',
+                getToken: () => 'token',
                 tokenScheme: 'Bearer',
               },
               retriesConfig: {

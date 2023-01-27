@@ -5,8 +5,8 @@ interface AuthConfig {
   refreshToken: () => Promise<string>;
   // The token scheme you'd like to use (Basic, Bearer, JWTBearer)
   tokenScheme: TokenScheme;
-  // The original token you'd like to use
-  token: string;
+  // Function to return the token you'd like to use
+  getToken: () => string;
 }
 
 export default AuthConfig;
