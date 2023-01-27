@@ -9,7 +9,6 @@ describe('ZetchError', () => {
         statusCode: 500,
       },
       {
-        requestConfig: {},
         url: 'url',
         numberOfRetries: 0,
         headers: {},

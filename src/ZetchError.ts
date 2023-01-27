@@ -1,23 +1,21 @@
-import { ZodFirstPartySchemaTypes } from 'zod/lib/types';
 import Headers from './types/Headers';
-import ZetchRequestConfig from './types/ZetchRequestConfig';
 
 class ZetchError extends Error {
   errorInfo: { message: string; statusCode: number; data: any };
 
   requestInfo: {
-    requestConfig?: ZetchRequestConfig<ZodFirstPartySchemaTypes>;
     url: string;
     numberOfRetries: number;
     headers: Headers;
+    body?: FormData | unknown[] | { [key: string]: unknown };
   };
   constructor(
     errorInfo: { message: string; statusCode: number; data: any },
     requestInfo: {
-      requestConfig?: ZetchRequestConfig<ZodFirstPartySchemaTypes>;
       url: string;
       numberOfRetries: number;
       headers: Headers;
+      body?: FormData | unknown[] | { [key: string]: unknown };
     }
   ) {
     super(errorInfo.message);

@@ -89,10 +89,10 @@ export const request = async <
         statusCode: response.status,
       },
       {
-        requestConfig,
         url,
         numberOfRetries: retries,
         headers,
+        body: requestConfig?.body,
       }
     );
 
