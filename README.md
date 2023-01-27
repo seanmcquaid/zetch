@@ -20,6 +20,20 @@
 
 ## Introduction
 
+Zetch is a Fetch based HTTP Client that allows you to get static type inference from your existing [Zod](https://github.com/colinhacks/zod) schemas.
+
+Zetch is designed to be as simple, light-weight and un-opinionated as possible. The goal is that this will eliminate the need for you to manually pass in types to your API calls. Instead, you can just pass in your Zod schema associated with the API call and get immediate static type inference.
+
+Some key features of Zetch are:
+
+- **Static type inference** - Zetch will infer the types of your API calls from your Zod schemas.
+- **Retries Configuration** - Zetch will retry your API calls to your specified amount if they fail and they meet your specified status codes.
+- **Auth Configuration** - Zetch allows you to configure your Authorization headers by providing your token and token scheme. If the request fails, your provided refeshToken function will run to get a new token prior to the retried request.
+- **Error logging** - Zetch will log API errors or Schema Validation errors to your configured onError functions.
+- **Base Headers** - Zetch allows you to configure your headers in a simple way for all of your calls for one client.
+- **Request Configuration** - Zetch allows you to configure your specific requests within a Zetch Client.
+
+
 ## Installation
 
 ```sh
@@ -153,6 +167,7 @@ interface BaseZetchConfig {
 Configs for a Zetch Request
 
 ```ts
+// Config used for all Zetch Requests except for GET requests
 interface ZetchRequestConfig<ValidationSchema extends ZodFirstPartySchemaTypes>
   extends BaseZetchConfig {
   // The validation schema you'd like to use for the response
@@ -165,6 +180,7 @@ interface ZetchRequestConfig<ValidationSchema extends ZodFirstPartySchemaTypes>
   abortController?: AbortController;
 }
 
+// Config used for GET requests
 type ZetchGetRequestConfig<
   ValidationSchema extends ZodFirstPartySchemaTypes
 > = Omit<ZetchRequestConfig<ValidationSchema>, 'body'>;
