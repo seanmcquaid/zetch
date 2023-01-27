@@ -2,7 +2,7 @@
   <img src="logo.svg" width="160px" align="center" alt="Zetch logo" />
   <h1 align="center">Zetch</h1>
   <p align="center">
-    A fetch wrapper with static type inference from your Zod Schemas
+    A Fetch based HTTP Client with static type inference from your Zod Schemas
   </p>
 </p>
 
@@ -100,6 +100,10 @@ const result = await zetchClient.get('/posts', {
 ## Zetch
 
 ### .get
+
+```ts
+
+```
 
 ### .post
 
