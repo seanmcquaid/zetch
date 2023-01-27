@@ -1,5 +1,5 @@
-import BaseZetchConfig from './BaseZetchConfig';
+import ZetchClientConfig from './ZetchClientConfig';
 import ZetchRequestConfig from './ZetchRequestConfig';
 import Headers from './Headers';
 
-export { BaseZetchConfig, Headers, ZetchRequestConfig };
+export { ZetchClientConfig, Headers, ZetchRequestConfig };

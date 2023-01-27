@@ -1,39 +1,23 @@
-import { ZodError } from 'zod';
-import Headers from '../types/Headers';
+import Headers from './Headers';
+import AuthConfig from './AuthConfig';
+import RetriesConfig from './RetriesConfig';
 import ZetchError from '../ZetchError';
-
-type TokenScheme = 'Basic' | 'Bearer' | 'JWTBearer';
+import { ZodError } from 'zod';
 
 interface BaseZetchConfig {
-  // The base url for your client
-  baseUrl: string;
-
-  // Base headers you'd like to provide for every request from the client
   headers?: Headers;
 
   // Configuration for authentication
-  authConfig?: {
-    // The function you'd like called to refresh the token
-    refreshToken: () => Promise<string>;
-    // The token scheme you'd like to use (Basic, Bearer, JWTBearer)
-    tokenScheme: TokenScheme;
-    // The original token you'd like to use
-    token: string;
-  };
+  authConfig?: AuthConfig;
 
   // Configuration for retries
-  retriesConfig?: {
-    // Status codes you'd like to retry on
-    retryStatuses: number[];
-    // The max number of retries you'd like to allow
-    numberOfRetries?: number;
-  };
+  retriesConfig?: RetriesConfig;
 
   // The function you'd like to use to log API errors to your error service of choice
-  logApiError?: (error: ZetchError) => void;
+  onApiError?: (error: ZetchError) => void;
 
   // The function you'd like to use to log API Validation errors to your error service of choice
-  logApiValidationError?: (error: ZodError) => void;
+  onApiValidationError?: (error: ZodError) => void;
 }
 
 export default BaseZetchConfig;

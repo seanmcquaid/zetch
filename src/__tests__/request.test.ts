@@ -117,8 +117,8 @@ describe('request', () => {
         expect(e).toBeInstanceOf(ZetchError);
       }
     });
-    it('logs api error if request fails and logApiError func is provided', async () => {
-      const logApiError = vi.fn();
+    it('logs api error if request fails and onApiError func is provided', async () => {
+      const onApiError = vi.fn();
       mswServer.use(
         rest.get(
           'https://jsonplaceholder.typicode.com/posts',
@@ -132,12 +132,12 @@ describe('request', () => {
           url: '/posts',
           baseZetchConfig: {
             baseUrl: 'https://jsonplaceholder.typicode.com',
-            logApiError,
+            onApiError,
           },
           method: 'GET',
         });
       } catch (e) {
-        expect(logApiError).toHaveBeenCalled();
+        expect(onApiError).toHaveBeenCalled();
       }
     });
     it('only retries to the max number of times configured in the baseConfig', async () => {
@@ -190,7 +190,7 @@ describe('request', () => {
       ]);
     });
     it('logs api validation error if the schema does not match the data', async () => {
-      const logApiValidationError = vi.fn();
+      const onApiValidationError = vi.fn();
 
       await request({
         url: '/posts',
@@ -204,12 +204,12 @@ describe('request', () => {
         },
         baseZetchConfig: {
           baseUrl: 'https://jsonplaceholder.typicode.com',
-          logApiValidationError,
+          onApiValidationError,
         },
         method: 'GET',
       });
 
-      expect(logApiValidationError).toHaveBeenCalled();
+      expect(onApiValidationError).toHaveBeenCalled();
     });
   });
 });

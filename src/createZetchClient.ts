@@ -4,7 +4,7 @@ import ZetchRequestConfig, {
   ZetchGetRequestConfig,
 } from './types/ZetchRequestConfig';
 import Headers from './types/Headers';
-import BaseZetchConfig from './types/BaseZetchConfig';
+import ZetchClientConfig from './types/ZetchClientConfig';
 import { z } from 'zod';
 const getData = <ValidationSchema extends ZodFirstPartySchemaTypes>(
   promise: Promise<{
@@ -18,7 +18,7 @@ const getData = <ValidationSchema extends ZodFirstPartySchemaTypes>(
   return promise.then(response => response.data);
 };
 
-const createZetchClient = (zetchConfig: BaseZetchConfig) => {
+const createZetchClient = (zetchConfig: ZetchClientConfig) => {
   return {
     get: <ValidationSchema extends ZodFirstPartySchemaTypes>(
       url: string,
@@ -87,5 +87,69 @@ const createZetchClient = (zetchConfig: BaseZetchConfig) => {
     },
   };
 };
+
+const zetch = {
+  get: <ValidationSchema extends ZodFirstPartySchemaTypes>(
+    url: string,
+    requestConfig?: ZetchGetRequestConfig<ValidationSchema>
+  ) => {
+    return getData(
+      request({
+        url,
+        requestConfig,
+        method: 'GET',
+      })
+    );
+  },
+  post: <ValidationSchema extends ZodFirstPartySchemaTypes>(
+    url: string,
+    requestConfig?: ZetchRequestConfig<ValidationSchema>
+  ) => {
+    return getData(
+      request({
+        url,
+        requestConfig,
+        method: 'POST',
+      })
+    );
+  },
+  put: <ValidationSchema extends ZodFirstPartySchemaTypes>(
+    url: string,
+    requestConfig?: ZetchRequestConfig<ValidationSchema>
+  ) => {
+    return getData(
+      request({
+        url,
+        requestConfig,
+        method: 'PUT',
+      })
+    );
+  },
+  patch: <ValidationSchema extends ZodFirstPartySchemaTypes>(
+    url: string,
+    requestConfig?: ZetchRequestConfig<ValidationSchema>
+  ) => {
+    return getData(
+      request({
+        url,
+        requestConfig,
+        method: 'PATCH',
+      })
+    );
+  },
+  delete: <ValidationSchema extends ZodFirstPartySchemaTypes>(
+    url: string,
+    requestConfig?: ZetchRequestConfig<ValidationSchema>
+  ) => {
+    return getData(
+      request({
+        url,
+        requestConfig,
+        method: 'DELETE',
+      })
+    );
+  },
+  create: (zetchConfig: ZetchClientConfig) => createZetchClient(zetchConfig),
+} as const;
 
 export default createZetchClient;

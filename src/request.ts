@@ -1,6 +1,6 @@
 import { ZodFirstPartySchemaTypes } from 'zod/lib/types';
 import ZetchRequestConfig from './types/ZetchRequestConfig';
-import BaseZetchConfig from './types/BaseZetchConfig';
+import ZetchClientConfig from './types/ZetchClientConfig';
 import Headers from './types/Headers';
 import ZetchError from './ZetchError';
 import { z } from 'zod';
@@ -18,7 +18,7 @@ export const request = async <
 }: {
   url: string;
   requestConfig?: ZetchRequestConfig<ValidationSchema>;
-  baseZetchConfig: BaseZetchConfig;
+  baseZetchConfig?: ZetchClientConfig;
   method: Method;
   retries?: number;
 }): Promise<{
@@ -28,22 +28,23 @@ export const request = async <
   numberOfRetries: number;
   headers: Headers;
 }> => {
-  const maxNumberOfRetries = baseZetchConfig?.retriesConfig?.numberOfRetries
-    ? baseZetchConfig.retriesConfig.numberOfRetries
-    : 1;
+  const retriesConfig =
+    requestConfig?.retriesConfig ?? baseZetchConfig?.retriesConfig;
+  const maxNumberOfRetries = retriesConfig?.numberOfRetries ?? 1;
   const body = requestConfig?.body
     ? requestConfig?.body instanceof FormData
       ? requestConfig?.body
       : JSON.stringify(requestConfig?.body)
     : undefined;
-  const headers: Headers = baseZetchConfig.authConfig
+  const authConfig = requestConfig?.authConfig ?? baseZetchConfig?.authConfig;
+  const headers: Headers = authConfig
     ? {
-        ...baseZetchConfig.headers,
+        ...baseZetchConfig?.headers,
         ...requestConfig?.headers,
-        Authorization: `${baseZetchConfig.authConfig.tokenScheme} ${baseZetchConfig.authConfig.token}`,
+        Authorization: `${authConfig.tokenScheme} ${authConfig.token}`,
       }
-    : { ...baseZetchConfig.headers, ...requestConfig?.headers };
-  const response = await fetch(baseZetchConfig.baseUrl + url, {
+    : { ...baseZetchConfig?.headers, ...requestConfig?.headers };
+  const response = await fetch(`${baseZetchConfig?.baseUrl ?? ''}${url}`, {
     headers,
     body,
     signal: requestConfig?.abortController?.signal,
@@ -52,17 +53,16 @@ export const request = async <
   const data = await response.json();
   if (!response.ok) {
     if (
-      baseZetchConfig.retriesConfig &&
-      baseZetchConfig.retriesConfig.retryStatuses.includes(response.status)
+      retriesConfig &&
+      retriesConfig.retryStatuses.includes(response.status)
     ) {
       if (maxNumberOfRetries > retries) {
         const numberOfAttemptedRetries = retries + 1;
-        if (baseZetchConfig.authConfig) {
-          const refreshedToken =
-            await baseZetchConfig.authConfig?.refreshToken();
+        if (authConfig) {
+          const refreshedToken = await authConfig.refreshToken();
           const updatedHeaders: Headers = {
             ...headers,
-            Authorization: `${baseZetchConfig.authConfig?.tokenScheme} ${refreshedToken}`,
+            Authorization: `${authConfig.tokenScheme} ${refreshedToken}`,
           };
           return request({
             url,
@@ -96,17 +96,23 @@ export const request = async <
       }
     );
 
-    if (baseZetchConfig.logApiError) {
-      baseZetchConfig.logApiError(error);
+    const onApiError = requestConfig?.onApiError ?? baseZetchConfig?.onApiError;
+
+    if (onApiError) {
+      onApiError(error);
     }
 
     throw error;
   }
 
+  const onApiValidationError =
+    requestConfig?.onApiValidationError ??
+    baseZetchConfig?.onApiValidationError;
+
   if (requestConfig?.validationSchema) {
     const validationResults = requestConfig.validationSchema?.safeParse(data);
-    if (!validationResults?.success && baseZetchConfig?.logApiValidationError) {
-      baseZetchConfig.logApiValidationError(validationResults.error);
+    if (!validationResults?.success && onApiValidationError) {
+      onApiValidationError(validationResults.error);
     }
   }
 
@@ -114,7 +120,7 @@ export const request = async <
     data,
     headers,
     requestConfig,
-    url: baseZetchConfig.baseUrl + url,
+    url: `${baseZetchConfig?.baseUrl ?? ''}${url}`,
     numberOfRetries: retries,
   };
 };
