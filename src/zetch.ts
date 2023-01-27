@@ -6,6 +6,7 @@ import ZetchRequestConfig, {
 import Headers from './types/Headers';
 import ZetchClientConfig from './types/ZetchClientConfig';
 import { z } from 'zod';
+
 const getData = <ValidationSchema extends ZodFirstPartySchemaTypes>(
   promise: Promise<{
     data: z.infer<ValidationSchema>;
@@ -152,4 +153,4 @@ const zetch = {
   create: (zetchConfig: ZetchClientConfig) => createZetchClient(zetchConfig),
 } as const;
 
-export default createZetchClient;
+export default zetch;
