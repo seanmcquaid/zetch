@@ -22,7 +22,7 @@ export const request = async <
   method: Method;
   retries?: number;
 }): Promise<{
-  data: z.infer<ValidationSchema>;
+  data: ValidationSchema['_output'];
   requestConfig?: ZetchRequestConfig<ValidationSchema>;
   url: string;
   numberOfRetries: number;

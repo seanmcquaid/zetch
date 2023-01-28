@@ -33,7 +33,6 @@ Some key features of Zetch are:
 - **Base Headers** - Zetch allows you to configure your headers in a simple way for all of your calls for one client.
 - **Request Configuration** - Zetch allows you to configure your specific requests within a Zetch Client.
 
-
 ## Installation
 
 ```sh
@@ -50,15 +49,15 @@ Making a GET request
 ```ts
 // Create a schema for a Post
 const postSchema = z.object({
-    title: z.string(),
-    body: z.string(),
-    id: z.number(),
-    userId: z.number(),
+  title: z.string(),
+  body: z.string(),
+  id: z.number(),
+  userId: z.number(),
 });
 
 // Make a request to get Posts with your schema provided to get static type inference
 await zetch.get('https://jsonplaceholder.typicode.com/posts', {
-    validationSchema: z.array(postSchema),
+  validationSchema: z.array(postSchema),
 });
 ```
 
@@ -67,12 +66,12 @@ Making a request with a body
 ```ts
 // Make a POST request with your body
 await zetch.post('/posts', {
-    body: {
-        title: 'foo',
-        body: 'bar',
-        userId: 1,
-        id: 1,
-    },
+  body: {
+    title: 'foo',
+    body: 'bar',
+    userId: 1,
+    id: 1,
+  },
 });
 
 // Make a POST request with FormData
@@ -83,10 +82,9 @@ formData.append('userId', '1');
 formData.append('id', '1');
 
 await zetch.post('/posts', {
-    body: formData,
+  body: formData,
 });
 ```
-
 
 Creating an API client and making a request
 
@@ -181,9 +179,8 @@ interface ZetchRequestConfig<ValidationSchema extends ZodFirstPartySchemaTypes>
 }
 
 // Config used for GET requests
-type ZetchGetRequestConfig<
-  ValidationSchema extends ZodFirstPartySchemaTypes
-> = Omit<ZetchRequestConfig<ValidationSchema>, 'body'>;
+type ZetchGetRequestConfig<ValidationSchema extends ZodFirstPartySchemaTypes> =
+  Omit<ZetchRequestConfig<ValidationSchema>, 'body'>;
 ```
 
 ### ZetchClientConfig
