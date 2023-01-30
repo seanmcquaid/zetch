@@ -20,7 +20,7 @@
 
 ## Introduction
 
-Zetch is a Fetch based HTTP Client that allows you to get static type inference from your existing [Zod](https://github.com/colinhacks/zod) schemas.
+Zetch is a HTTP Client that allows you to get static type inference from your existing [Zod](https://github.com/colinhacks/zod) schemas.
 
 Zetch is designed to be as simple, light-weight and un-opinionated as possible. The goal is that this will eliminate the need for you to manually pass in types to your API calls. Instead, you can just pass in your Zod schema associated with the API call and get immediate static type inference.
 
