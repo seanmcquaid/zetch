@@ -59,7 +59,9 @@ export const request = async <
       if (maxNumberOfRetries > retries) {
         const numberOfAttemptedRetries = retries + 1;
         if (authConfig) {
-          const refreshedToken = await authConfig.refreshToken();
+          const refreshedToken = authConfig.refreshToken
+            ? await authConfig.refreshToken()
+            : authConfig.getToken();
           const updatedHeaders: Headers = {
             ...headers,
             Authorization: `${authConfig.tokenScheme} ${refreshedToken}`,
