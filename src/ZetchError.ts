@@ -18,7 +18,8 @@ class ZetchError extends Error {
       body?: FormData | unknown[] | { [key: string]: unknown };
     }
   ) {
-    super(errorInfo.message);
+    super(`Request failed with status code ${errorInfo.statusCode}`);
+    this.name = 'ZetchError';
     this.errorInfo = errorInfo;
     this.requestInfo = requestInfo;
   }
