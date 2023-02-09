@@ -92,7 +92,7 @@ export const request = async <
         statusCode: response.status,
       },
       {
-        url,
+        url: `${baseZetchConfig?.baseUrl ?? ''}${url}`,
         numberOfRetries: retries,
         headers,
         body: requestConfig?.body,
