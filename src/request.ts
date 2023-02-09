@@ -50,7 +50,8 @@ export const request = async <
     signal: requestConfig?.abortController?.signal,
     method,
   });
-  const data = await response.json();
+  const text = await response.text();
+  const data = text === '' ? {} : JSON.parse(text);
   if (!response.ok) {
     if (
       retriesConfig &&

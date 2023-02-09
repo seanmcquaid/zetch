@@ -1,16 +1,16 @@
 import Headers from './types/Headers';
 
 class ZetchError extends Error {
-  errorInfo: { message: string; statusCode: number; data: any };
+  public errorInfo: { message: string; statusCode: number; data: unknown };
 
-  requestInfo: {
+  public requestInfo: {
     url: string;
     numberOfRetries: number;
     headers: Headers;
     body?: FormData | unknown[] | { [key: string]: unknown };
   };
   constructor(
-    errorInfo: { message: string; statusCode: number; data: any },
+    errorInfo: { message: string; statusCode: number; data: unknown },
     requestInfo: {
       url: string;
       numberOfRetries: number;
@@ -28,7 +28,7 @@ class ZetchError extends Error {
     return error instanceof ZetchError;
   }
 
-  toObject() {
+  public toObject() {
     return {
       error: this.errorInfo,
       request: this.requestInfo,
