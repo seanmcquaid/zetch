@@ -1,6 +1,6 @@
 {
   "name": "zetch",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "HTTP Client with static type inference from your Zod Schemas",
   "author": "Sean McQuaid",
   "license": "MIT",

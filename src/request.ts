@@ -105,7 +105,7 @@ export const request = async <
       onApiError(error);
     }
 
-    throw error;
+    return Promise.reject(error);
   }
 
   const onApiValidationError =
